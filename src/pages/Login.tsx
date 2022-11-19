@@ -13,16 +13,6 @@ export default function Login() {
     error: "",
   });
 
-  // useEffect(() => {
-  //   api
-  //     .post("/login", {
-  //       username: "pedropedro1",
-  //       password: "Senha123",
-  //     })
-  //     .then((res) => console.log(res.data))
-  //     .catch((err) => console.log(err.response.data.message));
-  // });
-
   async function login(e: React.FormEvent) {
     e.preventDefault();
 
@@ -33,8 +23,8 @@ export default function Login() {
         password: form.password,
       })
       .then((res) => {
-        window.localStorage.setItem("ng.token", res.data.token);
-        window.localStorage.setItem("ng.username", res.data.username);
+        window.sessionStorage.setItem("ng.token", res.data.token);
+        window.sessionStorage.setItem("ng.username", res.data.username);
 
         window.location.assign("/transacao");
       })

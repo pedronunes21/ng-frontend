@@ -1,8 +1,17 @@
 import React, { useState } from "react";
+import { redirect } from "react-router-dom";
 import { Squash } from "hamburger-react";
 
 export default function Header() {
   const [isOpen, setOpen] = useState(false);
+
+  function logout() {
+    window.sessionStorage.removeItem("ng.token");
+    window.sessionStorage.removeItem("ng.username");
+
+    window.location.replace("/login");
+  }
+
   return (
     <div className="p-[20px] h-[90px] w-full fixed top-0 left-0">
       <div className="flex items-center justify-between sm:justify-start gap-[30px] max-w-[1280px] w-full mx-auto">
@@ -28,7 +37,10 @@ export default function Header() {
             </a>
           </div>
           <div>
-            <button className="text-[18px] text-white py-[10px] sm:py-0">
+            <button
+              onClick={logout}
+              className="text-[18px] text-white py-[10px] sm:py-0"
+            >
               Sair
             </button>
           </div>

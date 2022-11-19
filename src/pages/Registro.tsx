@@ -2,35 +2,42 @@ import Button from "../components/Button";
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import api from "../services/api";
+import ReactLoading from "react-loading";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function Registro() {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
-    username: {
-      value: "",
-      message: "",
-    },
-    password: {
-      value: "",
-      message: "",
-    },
+    username: "",
+    password: "",
+    error: "",
   });
 
-  useEffect(() => {
+  async function register(e: React.FormEvent) {
+    e.preventDefault();
+
+    setLoading(true);
     api
-      .post("/login", {
-        username: "pedropedro1",
-        password: "Senha123",
+      .post("/user", {
+        username: form.username,
+        password: form.password,
       })
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err.response.data.message));
-  });
+      .then((res) => {
+        toast.success("Conta criada com sucesso!");
+        setTimeout(() => {
+          window.location.assign("/login");
+        }, 2000);
+      })
+      .catch((err) => setForm({ ...form, error: err.response.data.message }))
+      .finally(() => setLoading(false));
+  }
 
   return (
     <>
       <Helmet>
         <title>Registro | Ng cash</title>
       </Helmet>
+      <ToastContainer position="bottom-right" />
       <div
         style={{ backgroundImage: "url('/background.png')" }}
         className="w-screen h-full lg:h-screen bg-cover bg-no-repeat px-[20px] min-h-screen flex items-center"
@@ -43,28 +50,51 @@ export default function Registro() {
                 Informe seu usuário e senha para registrar-se
               </h2>
 
-              <form className="flex items-start flex-col gap-[30px] py-[30px] w-full">
+              <form
+                onSubmit={register}
+                className="flex items-start flex-col gap-[30px] py-[30px] w-full"
+              >
                 <div className="flex items-start flex-col w-full">
                   <label>Usuário</label>
                   <input
                     type="text"
-                    value={form.username.value}
+                    value={form.username}
                     onChange={(e) =>
                       setForm({
                         ...form,
-                        username: {
-                          message: "",
-                          value: e.target.value,
-                        },
+                        username: e.target.value,
+                        error: "",
                       })
                     }
                   />
                 </div>
                 <div className="flex items-start flex-col w-full">
                   <label>Senha</label>
-                  <input type="password" />
+                  <input
+                    type="password"
+                    value={form.password}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        password: e.target.value,
+                        error: "",
+                      })
+                    }
+                  />
                 </div>
-                <Button>Registrar</Button>
+                {form.error && <span className="text-red">{form.error}</span>}
+                <button className="button" disabled={loading}>
+                  {loading ? (
+                    <ReactLoading
+                      color="#000"
+                      type="spin"
+                      height={20}
+                      width={20}
+                    />
+                  ) : (
+                    "Enviar"
+                  )}
+                </button>
               </form>
 
               <div className="w-full pt-[30px] lg:pt-[100px]">

@@ -10,11 +10,35 @@ export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Private element={<Login />} /> */}
+        {/* Public Routes*/}
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
-        <Route path="/transacao" element={<Transacao />} />
-        <Route path="/historico" element={<Historico />} />
+
+        {/* Private Routes */}
+        <Route
+          path="/transacao"
+          element={
+            <Private>
+              <Transacao />
+            </Private>
+          }
+        />
+        <Route
+          path="/historico"
+          element={
+            <Private>
+              <Historico />
+            </Private>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <Private>
+              <div></div>
+            </Private>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
