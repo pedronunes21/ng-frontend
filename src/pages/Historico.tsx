@@ -217,7 +217,7 @@ export default function Historico() {
                                     isCashOut ? "text-red" : "text-green"
                                   }`}
                                 >
-                                  R$ {h.value},00
+                                  R$ {h.value.toString().replace(".", ",")}
                                 </span>
                               </div>
                             </div>

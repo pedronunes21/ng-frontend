@@ -9,7 +9,7 @@ import { ToastContainer, toast } from "react-toastify";
 export default function Transacao() {
   const [token, setToken] = useState(window.sessionStorage.getItem("ng.token"));
   const [balance, setBalance] = useState({
-    value: 0,
+    value: "",
     loading: true,
     show: false,
   });
@@ -24,7 +24,11 @@ export default function Transacao() {
     try {
       const res = await api.get(`/balance?token=${token}`);
 
-      setBalance({ ...balance, value: res.data.balance, loading: false });
+      setBalance({
+        ...balance,
+        value: parseFloat(res.data.balance).toFixed(2),
+        loading: false,
+      });
     } catch (err) {}
   }
   useEffect(() => {
@@ -42,12 +46,12 @@ export default function Transacao() {
     try {
       const res = await api.post(`/transaction?token=${token}`, {
         creditedUsername: transaction.creditedUser,
-        value: parseInt(value),
+        value: parseFloat(value),
       });
 
       setBalance({
         ...balance,
-        value: balance.value - parseInt(value),
+        value: (parseFloat(balance.value) - parseFloat(value)).toFixed(2),
       });
 
       creditedUser = "";
@@ -86,18 +90,16 @@ export default function Transacao() {
                     R$
                     <span
                       style={{
-                        width: `${
-                          (balance.value.toString().length + 3) * 17
-                        }px`,
+                        width: `${balance.value.toString().length * 17}px`,
                       }}
                       className="px-[5px] tracking-[2px] block"
                     >
                       {balance.loading
                         ? " - - - -"
                         : balance.show
-                        ? balance.value + ",00"
+                        ? balance.value.toString().replace(".", ",")
                         : Array.from(
-                            { length: balance.value.toString().length + 3 },
+                            { length: balance.value.toString().length },
                             (v, i) => "-"
                           ).map((v) => v)}
                     </span>
@@ -157,6 +159,7 @@ export default function Transacao() {
                         value: e.target.value,
                       })
                     }
+                    step="0.01"
                   />
                 </div>
                 {transaction.error && (
